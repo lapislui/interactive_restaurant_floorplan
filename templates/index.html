@@ -13,8 +13,8 @@
     --bg: #f7f7f7;
     --card: #fff;
     --accent: #e0e0e0;  /* Changed to grey for initial state */
-    --billed: #90ee90;
-    --cleared: #ff6b6b;
+    --billed: #ff6b6b;
+    --cleared: #90ee90;
   }
   body {
     margin: 0;
@@ -261,14 +261,8 @@
         if (isInRecentlyCleared) {
           // When clicking on red table, ask for confirmation
           if (confirm(`Make Table ${t.id} available again?`)) {
-            // Remove from recently cleared and return to grey state
-            el.classList.remove('cleared');
-            const tableText = `Table ${t.id} (${t.capacity} pac)`;
-            const arr = Array.from(clearedList.children);
-            const idx = arr.findIndex(div => div.textContent.includes(tableText));
-            if (idx !== -1) {
-              arr[idx].remove();
-            }
+            // Instead of handling locally, emit to server to sync across all clients
+            socket.emit('remove_from_cleared', { id: t.id });
           }
           return;
         }
